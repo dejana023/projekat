@@ -19,7 +19,7 @@
 //DELAY
 #define DELAY 10
 
-//ADRESE NIZOVA
+//POCETNE ADRESE NIZOVA
 #define addr_Pixels1 0
 #define addr_index1 17000
 

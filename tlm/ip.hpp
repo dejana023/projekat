@@ -62,6 +62,7 @@ SC_MODULE(Ip)
         num_i ix;
         num_f rx;
         num_f cx;
+        num_i scale;
         std::vector<std::vector<num_f>> _Pixels;
         std::vector<std::vector<std::vector<num_f>>> _index;    
 };

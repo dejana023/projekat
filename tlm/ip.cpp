@@ -76,6 +76,11 @@ void Ip::b_transport(pl_t& pl, sc_time& offset)
                     _sine = toDouble(buf);
                         //cout << "_sine IP: " << _sine << endl;
                     break;
+                case addr_scale:
+                    scale = toInt(buf);
+                        //cout << "scale IP: " << scale << endl;
+                    break;
+                
                     
                 default:
                     pl.set_response_status(TLM_ADDRESS_ERROR_RESPONSE);
@@ -150,6 +155,7 @@ void Ip::proc() {
                 
                 //cout << "rpos: " << rpos << endl;
                 //cout << "cpos: " << cpos << endl;
+                //cout << "/////////////////////////////////////////////" << endl;
       
                 /*static int counter;
                 counter ++;
@@ -163,19 +169,22 @@ void Ip::proc() {
                 
                 //cout << "rx: " << rx << endl;
                 //cout << "cx: " << cx << endl;
-      
-                // cout << "rx: " << rx << ", cx: " << cx << endl;
 
                 // Test whether this sample falls within boundary of _index patch
                 if (rx > -1.0 && rx < (double) _IndexSize  &&
                     cx > -1.0 && cx < (double) _IndexSize) {
+                    
+                    /*static int counter;
+                    counter++;
+                    cout << "uslo u if: " << counter << " puta" << endl;*/
           
                     int r = iy + i*step;
                     int c = ix + j*step;
+                    
+                    //cout << "r: " << r << endl;
+                    //cout << "c: " << c << endl;
           
-                    //cout << "r: " << r << ", c: " << c << endl;
-          
-                    AddSample(r, c, rpos, cpos, rx, cx, step);
+                    AddSample(r, c, rpos, cpos, rx, cx, num_i(scale));
                 }
             }
         }
@@ -240,6 +249,11 @@ void Ip::AddSample(num_i r, num_i c, num_f rpos, num_f cpos, num_f rx, num_f cx,
 
     if (r < 1+step || r >= _height-1-step || c < 1+step || c >= _width-1-step ) return;
     
+    static int counter;
+    counter ++;
+    //cout << "Uslo u AddSample " << counter << " puta" << ", rpos: " << rpos << ", cpos: " << cpos << endl;
+    cout << "Uslo u AddSample: " << counter << " puta" << endl;
+    
     vector<num_f> pixels1D;
          
     for (int w = 0; w < _width; w++)
@@ -278,6 +292,9 @@ void Ip::AddSample(num_i r, num_i c, num_f rpos, num_f cpos, num_f rx, num_f cx,
         }
     std::cout << std::endl;
     }*/
+    
+    //cout << "rpos: " << rpos << endl;
+    //cout << "cpos: " << cpos << endl;
         
     weight = _lookup2[num_i(rpos * rpos + cpos * cpos)];
     

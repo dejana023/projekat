@@ -286,9 +286,10 @@ void Surf::createVector(double scale, double y, double x) {
   // _index square.
   for (i = -iradius; i <= iradius; i++)
     for (j = -iradius; j <= iradius; j++) {
-      static int counter;
-      counter ++;
-      cout << "Uslo u for petlju " << counter << " puta" << endl;
+    
+      static int counterfor;
+      counterfor++;
+      //cout << "Uslo u for petlju: " << counterfor << " puta" << endl;
       // Rotate sample offset to make it relative to key orientation.
       // Uses (x,y) coords.  Also, make subpixel correction as later image
       // offset must be an integer.  Divide by spacing to put in _index units.
@@ -319,7 +320,15 @@ void Surf::createVector(double scale, double y, double x) {
                   
     }
     
+    cout << "Sadržaj _index niza:" << endl;
+    for (int i = 0; i < _IndexSize; ++i) {
+        for (int j = 0; j < _IndexSize; ++j) {
+            for (int k = 0; k < 4; ++k) {
+                cout << "_index[" << i << "][" << j << "][" << k << "]: " << _index[i][j][k] << endl;
+            }
+        }
     
+    }
 }
 
 /*void Surf::ispisiIndex() const {
@@ -359,10 +368,10 @@ void Surf::AddSample(num_i r, num_i c, num_f rpos,
              c < 1+step  ||  c >= _width - 1-step){
         return;}
   
-           static int counter;
+       /*    static int counter;
         counter ++;
         //if (counter == 105)
-        cout << "uslo u add sample: " << counter << " puta, " << "rpos: " << rpos << "cpos: " << cpos << endl;
+        cout << "uslo u add sample: " << counter << " puta, " << "rpos: " << rpos << "cpos: " << cpos << endl;*/
  //cout << "step3: " << step << endl;
   weight = _lookup2[num_i(rpos * rpos + cpos * cpos)];
   //std::cout << "weight: " << weight << endl;
@@ -376,6 +385,14 @@ void Surf::AddSample(num_i r, num_i c, num_f rpos,
   //std::cout << "dy: " << dy << ", dx: " << dx << endl << endl;
   
   PlaceInIndex(dx, (dx<0?0:1), dy, (dy<0?2:3), rx, cx);
+  
+   /* cout << "Sadržaj _index niza:" << endl;
+    for (int i = 0; i < _IndexSize; ++i) {
+        for (int j = 0; j < _IndexSize; ++j) {
+            for (int k = 0; k < 4; ++k) {
+                cout << "_index[" << i << "][" << j << "][" << k << "]: " << _index[i][j][k] << endl;
+            }
+        }*/
   
   
 //cout << "r: " << r << ", c: " <<  c << ", step: " << step << endl; //celi brojevi
@@ -427,6 +444,8 @@ void Surf::PlaceInIndex(num_f mag1, num_i ori1, num_f mag2, num_i ori2, num_f rx
     _index[ri + 1][ci][ori1] += mag1 * rfrac * (1.0 - cfrac);
     _index[ri + 1][ci][ori2] += mag2 * rfrac * (1.0 - cfrac);
   }
+  
+
 }
 
 

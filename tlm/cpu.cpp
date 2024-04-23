@@ -142,6 +142,7 @@ void Cpu::initializeGlobals(Image *im, bool dbl = false, int insi = 4) {
     _VecLength = _IndexSize * _IndexSize * _OriSize; // Izračunavanje na osnovu datih vrednosti
     //_width = im->getWidth();
     //_height = im->getHeight();
+    
     // Inicijalizacija _Pixels, _lookup1, _lookup2...
     createLookups(); // Popunjava _lookup1 i _lookup2 tabele
     
@@ -316,12 +317,12 @@ void Cpu::createVector(double scale, double row, double col) {
     double fracr =   _cose * fracy + _sine * fracx;
     double fracc = - _sine * fracy + _cose * fracx;
     
-    cout << "iy: " << iy << endl;
-    cout << "ix: " << ix << endl;
-    cout << "fracy: " << fracy << endl;
-    cout << "fracx: " << fracx << endl;
-    cout << "fracr: " << fracr << endl;
-    cout << "fracc: " << fracc << endl;
+    //cout << "iy: " << iy << endl;
+    //cout << "ix: " << ix << endl;
+    //cout << "fracy: " << fracy << endl;
+    //cout << "fracx: " << fracx << endl;
+    //cout << "fracr: " << fracr << endl;
+    //cout << "fracc: " << fracc << endl;
   
   
     //cout << "fracr: " << fracr << endl;
@@ -334,12 +335,14 @@ void Cpu::createVector(double scale, double row, double col) {
     radius = 1.4 * spacing * (_IndexSize + 1) / 2.0;
     iradius = (int) (radius/step + 0.5);
   
-    cout << "iradius: " << iradius << endl; 
+    //cout << "iradius: " << iradius << endl; 
  
     bool done = 0;
     int ready = 1;
     bool need_start = 0;
     
+    write_hard_int(addr_scale, scale);
+        //cout << "scale CPU: " << scale << endl;
     write_hard_int(addr_iradius, iradius);
         //cout << "iradius CPU: " << iradius << endl;
     write_hard_double(addr_fracr, fracr);

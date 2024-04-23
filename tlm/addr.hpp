@@ -37,5 +37,6 @@
 #define addr_cose 100308
 #define addr_iy 100309
 #define addr_ix 100310
+#define addr_scale 100311
 
 #endif

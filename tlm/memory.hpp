@@ -18,7 +18,6 @@ using namespace sc_core;
 SC_MODULE(Mem)
 {
 public:
-    //SC_HAS_PROCESS(Mem);
     Mem(sc_module_name name);
 
     tlm_utils::simple_target_socket<Mem> mem_socket_1; 

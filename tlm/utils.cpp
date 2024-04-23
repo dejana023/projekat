@@ -31,41 +31,6 @@ num_f toNum_f(unsigned char *buf)
 }
 
 
-
-/*double toDouble(unsigned char *buf)
-{
-    double val = 0.0;
-    val += ((double)buf[0]) * pow(256, 7);
-    val += ((double)buf[1]) * pow(256, 6);
-    val += ((double)buf[2]) * pow(256, 5);
-    val += ((double)buf[3]) * pow(256, 4);
-    val += ((double)buf[4]) * pow(256, 3);
-    val += ((double)buf[5]) * pow(256, 2);
-    val += ((double)buf[6]) * pow(256, 1);
-    val += ((double)buf[7]);  
-    return val;
-} */
-
-/*void fixToChar(unsigned char *c, res_type d)
-{
-  stringToChar(c,d.to_bin());
-}
-
-void stringToChar (unsigned char *buf, string s)
-{
-  s.erase(0,2); // remove "0b"
-  s.erase(FIXED_WIDTH,1); // remove the dot
-  char single_char[CHAR_LENGHT];
-  for (int i = 0; i < CHARS_AMOUNT; ++i)
-    {
-      s.copy(single_char,CHAR_LENGHT,i*CHAR_LENGHT); // copy 8 letters (0s and 1s) to char array
-      int char_int = stoi(single_char, nullptr, 2); // binary string -> int
-      buf[i] = (unsigned char) char_int;
-    }
-}*/
-
-
-
 void intToUchar(unsigned char *buf,int val)
 {
     buf[0] = (char) (val >> 24);
@@ -88,6 +53,7 @@ void doubleToUchar(unsigned char *buf, double val)
         buf[i] = static_cast<unsigned char>((intVal >> (i * 8)) & 0xFF);
     }
 }
+
 
 double toDouble(unsigned char *buf)
 {

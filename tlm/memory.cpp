@@ -35,7 +35,7 @@ void Mem::b_transport(pl_t& pl, sc_time& offset)
                 
                 //cout << "Upisano u mem:" ;
                 //cout << "Adresa: " << static_cast<int>(addr-1) << ", Upisan broj: " << static_cast<int>(mem[addr-1]) << endl;
-                cout<< "mem[" << m << "] = " << mem[m] << endl;
+                //cout<< "mem[" << m << "] = " << mem[m] << endl;
 
 
             }
@@ -45,64 +45,26 @@ void Mem::b_transport(pl_t& pl, sc_time& offset)
             break;
 
 
-
-/*case tlm::TLM_READ_COMMAND:
+            
+        case tlm::TLM_READ_COMMAND:
             for (unsigned int i = 0; i < len; i+=6)
             {
-                unsigned int m = addr + i;
-                buf = (unsigned char*)&mem[addr++];
-                cout << "buf[" << m << "] = " << *(num_f*)buf << endl;
+                value = (int64_t)(mem[addr++] << 30);
+                buf[i] = (unsigned char)(value >> 8);
+                buf[i+1] = (unsigned char)(value >> 16);
+                buf[i+2] = (unsigned char)(value >> 24);
+                buf[i+3] = (unsigned char)(value >> 32);
+                buf[i+4] = (unsigned char)(value >> 40);
+                buf[i+5] = (unsigned char)(value & 0xFF);
+                //std::cout << "citanje iz mem: ";
+                //std::cout << "adresa: " << (int)(addr-1) << " " << mem[addr-1] <<", citam: " << value << " " << (num_f)buf[i] << (num_f)buf[i+1] << std::endl << (num_f)buf[i+2] << std::endl << (num_f)buf[i+3] << std::endl << (num_f)buf[i+4] << std::endl << (num_f)buf[i+5] << std::endl;
             }
             pl.set_response_status(tlm::TLM_OK_RESPONSE);
             
             offset += sc_core::sc_time(DELAY, sc_core::SC_NS);
-            break;*/
-            
-/*case TLM_READ_COMMAND:
-            //cout << "Reading from address: " << addr << " with length: " << len << endl;
-            for (unsigned int i = 0; i < len; i++)
-            {
-                unsigned int m = addr + i;
-                //cout << "Reading from buffer at index: " << m << endl;
-                buf = (unsigned char*)&mem[m];
-                cout << "Buffer[" << m << "] = " << *(num_f*)buf << endl;
-            }
-            pl.set_response_status(tlm::TLM_OK_RESPONSE);
-            offset += sc_core::sc_time(DELAY, sc_core::SC_NS);
-            break;*/
-            
-            
-         //OVAJ RADI KAKO TREBA!!!!!!!!!!!!!!!!!!!!!!!!!   
-        /*case tlm::TLM_READ_COMMAND:
-            for (unsigned int i = 0; i < len; i++) {
-                unsigned int m = addr + i;
-                num_f* num_ptr = reinterpret_cast<num_f*>(&mem[m]);
-                //cout << "buf[" << m << "] = " << *num_ptr << endl;
-            }
-            pl.set_response_status(tlm::TLM_OK_RESPONSE);
-            offset += sc_core::sc_time(DELAY, sc_core::SC_NS);
-            break;*/
-            
-            case tlm::TLM_READ_COMMAND:
-			for (unsigned int i = 0; i < len; i+=6)
-			{
-				value = (int64_t)(mem[addr++] << 30);
-		  		buf[i] = (unsigned char)(value >> 8);
-		  		buf[i+1] = (unsigned char)(value >> 16);
-		  		buf[i+2] = (unsigned char)(value >> 24);
-		  		buf[i+3] = (unsigned char)(value >> 32);
-		  		buf[i+4] = (unsigned char)(value >> 40);
-		  		buf[i+5] = (unsigned char)(value & 0xFF);
-		  		//std::cout << "citanje iz mem: ";
-				//std::cout << "adresa: " << (int)(addr-1) << " " << mem[addr-1] <<", citam: " << value << " " << (num_f)buf[i] << (num_f)buf[i+1] << std::endl << (num_f)buf[i+2] << std::endl << (num_f)buf[i+3] << std::endl << (num_f)buf[i+4] << std::endl << (num_f)buf[i+5] << std::endl;
-			}
-			pl.set_response_status(tlm::TLM_OK_RESPONSE);
+            break;
 			
-			offset += sc_core::sc_time(DELAY, sc_core::SC_NS);
-			break;
-            
 
-        
         default:
             pl.set_response_status( TLM_COMMAND_ERROR_RESPONSE );
             offset += sc_core::sc_time(DELAY, sc_core::SC_NS);

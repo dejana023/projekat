@@ -21,7 +21,6 @@ using namespace sc_core;
 SC_MODULE(Ip)
 {
     public:
-        //SC_HAS_PROCESS(Ip);
         Ip(sc_module_name name);
         ~Ip();
 

@@ -11,15 +11,15 @@
 
 class Vp :  public sc_core::sc_module
 {
-	public:
-		Vp(sc_core::sc_module_name name,const string& image_name, int arg, char **argv);
-		~Vp();
+    public:
+        Vp(sc_core::sc_module_name name,const string& image_name, int arg, char **argv);
+        ~Vp();
 
-	protected:
-		Cpu cpu;
-		InterCon interconnect;
-		Ip ip;
-		Mem memory;		
+    protected:
+        Cpu cpu;
+        InterCon interconnect;
+        Ip ip;
+        Mem memory;		
 };
 
 #endif // VP_HPP_

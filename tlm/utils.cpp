@@ -26,10 +26,21 @@ num_f toNum_f(unsigned char *buf)
     val += (uint64_t)(buf[3]) << 32;
     val += (uint64_t)(buf[4]) << 40;
     val += buf[5];
-
-    return ((double)val / 1073741824.0); // 1073741824 = 2^30
+    
+    num_f mega = (double)val / 1073741824.0; // 1073741824 = 2^30
+    
+    if (is_negative(mega))  {
+        mega -= 262144; // 262144 = 2^18
+    }
+    
+    return mega; 
 }
 
+bool is_negative(num_f val) {
+    sc_bv<18> bits = val.to_int();
+    
+    return bits[17] == 1;
+}
 
 void intToUchar(unsigned char *buf,int val)
 {

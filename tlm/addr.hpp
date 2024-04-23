@@ -16,6 +16,8 @@
 #define _width 129
 #define _IndexSize 4
 
+#define num_of_bits 18
+
 //DELAY
 #define DELAY 10
 

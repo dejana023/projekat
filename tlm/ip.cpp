@@ -131,7 +131,7 @@ void Ip::proc() {
     {
         static int cntIp;
         cntIp++;
-        cout << cntIp << " of 64 processing started" << endl;
+        cout << cntIp << " of 49 processing started" << endl;
 
         
         // Examine all points from the gradient image that could lie within the _index square.
@@ -147,8 +147,9 @@ void Ip::proc() {
                 // offset must be an integer.  Divide by spacing to put in _index units.
                 rpos = (step*(_cose * i + _sine * j) - fracr) / spacing;
                 cpos = (step*(- _sine * i + _cose * j) - fracc) / spacing;
-      
-                // cout << "rpos: " << rpos << ", cpos: " << cpos << endl;
+                
+                //cout << "rpos: " << rpos << endl;
+                //cout << "cpos: " << cpos << endl;
       
                 /*static int counter;
                 counter ++;
@@ -159,6 +160,9 @@ void Ip::proc() {
                 // weight on _index[1] (e.g., when rpos is 0 and _IndexSize is 3.
                 rx = rpos + _IndexSize / 2.0 - 0.5;
                 cx = cpos + _IndexSize / 2.0 - 0.5;
+                
+                //cout << "rx: " << rx << endl;
+                //cout << "cx: " << cx << endl;
       
                 // cout << "rx: " << rx << ", cx: " << cx << endl;
 
@@ -222,7 +226,7 @@ void Ip::proc() {
                   
     
     
-         cout << cntIp << " of 64 entry from IP to memory completed" << endl;
+         cout << cntIp << " of 49 entry from IP to memory completed" << endl;
          ready = 1;   
     
     }

@@ -16,7 +16,6 @@ void Mem::b_transport(pl_t& pl, sc_time& offset)
     tlm_command cmd    = pl.get_command();
     sc_dt::uint64 addr  = pl.get_address();
     unsigned char *buf = pl.get_data_ptr();
-    //num_f *buf = reinterpret_cast<num_f*>(pl.get_data_ptr());
     unsigned int len   = pl.get_data_length();
     
     uint64_t value;
@@ -49,15 +48,20 @@ void Mem::b_transport(pl_t& pl, sc_time& offset)
         case tlm::TLM_READ_COMMAND:
             for (unsigned int i = 0; i < len; i+=6)
             {
-                value = (int64_t)(mem[addr++] << 30);
+                value = (uint64_t)(mem[addr++] << 30);
                 buf[i] = (unsigned char)(value >> 8);
                 buf[i+1] = (unsigned char)(value >> 16);
                 buf[i+2] = (unsigned char)(value >> 24);
                 buf[i+3] = (unsigned char)(value >> 32);
                 buf[i+4] = (unsigned char)(value >> 40);
                 buf[i+5] = (unsigned char)(value & 0xFF);
+                
+                //if (addr > 17000) {
                 //std::cout << "citanje iz mem: ";
                 //std::cout << "adresa: " << (int)(addr-1) << " " << mem[addr-1] <<", citam: " << value << " " << (num_f)buf[i] << (num_f)buf[i+1] << std::endl << (num_f)buf[i+2] << std::endl << (num_f)buf[i+3] << std::endl << (num_f)buf[i+4] << std::endl << (num_f)buf[i+5] << std::endl;
+                //std::cout << "/////////////////////////////////////////////////" << endl;
+                //std::cout << "IZ MEMORIJE " <<  mem[addr-1] << endl;
+               // }
             }
             pl.set_response_status(tlm::TLM_OK_RESPONSE);
             

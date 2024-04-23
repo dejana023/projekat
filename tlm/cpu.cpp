@@ -315,6 +315,14 @@ void Cpu::createVector(double scale, double row, double col) {
     double fracx = col-ix;
     double fracr =   _cose * fracy + _sine * fracx;
     double fracc = - _sine * fracy + _cose * fracx;
+    
+    cout << "iy: " << iy << endl;
+    cout << "ix: " << ix << endl;
+    cout << "fracy: " << fracy << endl;
+    cout << "fracx: " << fracx << endl;
+    cout << "fracr: " << fracr << endl;
+    cout << "fracc: " << fracc << endl;
+  
   
     //cout << "fracr: " << fracr << endl;
   
@@ -326,7 +334,7 @@ void Cpu::createVector(double scale, double row, double col) {
     radius = 1.4 * spacing * (_IndexSize + 1) / 2.0;
     iradius = (int) (radius/step + 0.5);
   
-        
+    cout << "iradius: " << iradius << endl; 
  
     bool done = 0;
     int ready = 1;
@@ -400,7 +408,7 @@ void Cpu::createVector(double scale, double row, double col) {
                 }
             }
                   
-            /*for (int i = 0; i < _IndexSize; ++i) {
+            for (int i = 0; i < _IndexSize; ++i) {
                 for (int j = 0; j < _IndexSize; ++j) {
                     for (int k = 0; k < 4; ++k) {
                         cout << "IZ CPU-a _index[" << i << "]" << "[" << j << "]" << "[" << k << "]" << " = " << _index[i][j][k] << endl;
@@ -408,7 +416,7 @@ void Cpu::createVector(double scale, double row, double col) {
                 }
             }
                   
-            cout << "/////////////////////////////////////////////////////////////" << endl;*/   
+            cout << "/////////////////////////////////////////////////////////////" << endl;  
                   
             ready = 0;
             need_start = 0;
@@ -452,7 +460,7 @@ num_f Cpu::read_mem(sc_dt::sc_uint<64> addr)
     
     num_f mega = toNum_f(buf);
     
-    cout << "buf iz cpu-a: " << mega << endl;
+    //cout << "buf iz cpu-a: " << mega << endl;
     
     return toNum_f(buf);
 }

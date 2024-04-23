@@ -22,5 +22,6 @@ void intToUchar(unsigned char *buf,int val);
 double toDouble(unsigned char *buf);
 void doubleToUchar(unsigned char *buf, double val);
 num_f toNum_f(unsigned char *buf);
+bool is_negative(num_f val);
 
 #endif

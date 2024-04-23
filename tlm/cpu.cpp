@@ -437,6 +437,8 @@ void Cpu::createVector(double scale, double row, double col) {
                       }
                   }*/
                   
+                  index1d.clear();
+                  
                   for (int i = 0; i < 64 ; i++) {
                       offset += sc_core::sc_time(DELAY+DELAY, sc_core::SC_NS);
                       index1d.push_back(read_mem(addr_index1+i));

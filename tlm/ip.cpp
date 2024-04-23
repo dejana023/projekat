@@ -215,6 +215,8 @@ void Ip::proc() {
     
 }
 
+mem.clear();
+
 num_f* index1D = new num_f[_IndexSize * _IndexSize * 4];
         
         //index_1d = new num_f[_IndexSize * _IndexSize * 4];
@@ -262,6 +264,8 @@ num_f* index1D = new num_f[_IndexSize * _IndexSize * 4];
   		      mem_socket->b_transport(pl, offset);
                   
                   }
+                  
+                  
     
     
           //  cout << "Upis iz IP-a u memoriju zavrsen" << endl;

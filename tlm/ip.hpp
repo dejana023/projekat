@@ -19,7 +19,7 @@ using namespace std;
 using namespace sc_core;
 
 SC_MODULE(Ip)
-{
+{   
     public:
         Ip(sc_module_name name);
         ~Ip();
@@ -48,6 +48,7 @@ SC_MODULE(Ip)
         sc_uint<1> ready;
         sc_uint<1> start;
 
+        std::vector<num_f> pixels1D;
         std::vector<num_f> _lookup2;     
         num_i iradius;
         num_f fracr;
@@ -63,7 +64,7 @@ SC_MODULE(Ip)
         num_f rx;
         num_f cx;
         num_i scale;
-        std::vector<std::vector<num_f>> _Pixels;
+        num_f** _Pixels;
         std::vector<std::vector<std::vector<num_f>>> _index;    
 };
 

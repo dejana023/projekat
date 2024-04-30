@@ -25,6 +25,9 @@
 #define addr_Pixels1 0
 #define addr_index1 17000
 
+//ADRESA ZA ROM
+#define addr_rom 18000
+
 //ADRESE PROMENJIVIH
 #define addr_start 100300
 #define addr_ready 100301

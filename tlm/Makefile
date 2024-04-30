@@ -12,7 +12,7 @@ CFLAGS=-c $(OPENCV_CFLAGS)
 LDFLAGS=-lsystemc $(OPENCV_LIBS)
 
 # Source files
-SOURCES=main.cpp utils.cpp memory.cpp cpu.cpp interconnect.cpp ip.cpp vp.cpp ../spec/imload.cpp ../spec/image.cpp ../spec/fasthessian.cpp
+SOURCES=main.cpp utils.cpp memory.cpp lookuprom.cpp cpu.cpp interconnect.cpp ip.cpp vp.cpp ../spec/imload.cpp ../spec/image.cpp ../spec/fasthessian.cpp
 
 # Object files
 OBJECTS=$(SOURCES:.cpp=.o)
@@ -33,4 +33,4 @@ $(EXECUTABLE): $(OBJECTS)
 
 # Clean target
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+	rm -f $(OBJECTS) $(EXECUTABLE) ../data/*.surf

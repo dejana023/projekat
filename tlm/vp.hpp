@@ -8,6 +8,7 @@
 #include "interconnect.hpp"
 #include "ip.hpp"
 #include "memory.hpp"
+#include "lookuprom.hpp"
 
 class Vp :  public sc_core::sc_module
 {
@@ -19,7 +20,8 @@ class Vp :  public sc_core::sc_module
         Cpu cpu;
         InterCon interconnect;
         Ip ip;
-        Mem memory;		
+        Mem memory;
+        Rom rom;		
 };
 
 #endif // VP_HPP_

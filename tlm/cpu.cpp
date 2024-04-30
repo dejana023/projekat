@@ -411,7 +411,7 @@ void Cpu::createVector(double scale, double row, double col) {
                 }
             }
                   
-            for (int i = 0; i < _IndexSize; ++i) {
+            /*for (int i = 0; i < _IndexSize; ++i) {
                 for (int j = 0; j < _IndexSize; ++j) {
                     for (int k = 0; k < 4; ++k) {
                         cout << "IZ CPU-a _index[" << i << "]" << "[" << j << "]" << "[" << k << "]" << " = " << _index[i][j][k] << endl;
@@ -419,7 +419,7 @@ void Cpu::createVector(double scale, double row, double col) {
                 }
             }
                   
-            cout << "/////////////////////////////////////////////////////////////" << endl;  
+            cout << "/////////////////////////////////////////////////////////////" << endl;*/  
                   
             ready = 0;
             need_start = 0;

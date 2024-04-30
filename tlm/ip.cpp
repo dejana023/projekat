@@ -9,6 +9,7 @@ Ip::Ip(sc_module_name name) :
     ready(1)
     
 {
+    SC_THREAD(proc);
     _index.resize(_IndexSize, std::vector<std::vector<num_f>>(_IndexSize, std::vector<num_f>(4, 0.0f)));
     _lookup2.resize(40);
     interconnect_socket.register_b_transport(this, &Ip::b_transport);
@@ -111,10 +112,19 @@ void Ip::b_transport(pl_t& pl, sc_time& offset)
 
 void Ip::proc() {
 
-    for (int n=0;n<40;n++)
-          _lookup2[n]=exp(-((num_f)(n+0.5))/8.0);
+    
+    vector<num_f> _lookup2_pom;
+    
+    for (int n=0; n<40; n++) {
+        offset += sc_core::sc_time(DELAY, sc_core::SC_NS);
+        _lookup2_pom.push_back(read_rom(addr_rom + n));
+    }
+    
+    for(int i=0; i<40; i++) {
+        _lookup2[i] = static_cast<num_f>(_lookup2_pom[i]);
+    } 
           
-          vector<num_f> pixels1D;
+    vector<num_f> pixels1D;
          
     for (int w = 0; w < _width; w++)
     {
@@ -153,8 +163,6 @@ void Ip::proc() {
     std::cout << std::endl;
     }*/
           
-    /*_lookup2 = {.939411163330078125, .829029083251953125, .7316131591796875, .6456451416015625, .569782257080078125, .50283050537109375, .443744659423828125, .391605377197265625, .34558868408203125, .304981231689453125, .269145965576171875, .237518310546875, .2096099853515625, .184978485107421875, .163242340087890625, .144062042236328125, .127132415771484375, .112194061279296875, .099010467529296875, .087375640869140625, .07711029052734375, .068050384521484375, .06005096435546875, .052997589111328125, .0467681884765625, .041271209716796875, .0364227294921875, .03214263916015625, .0283660888671875, .02503204345703125, .022090911865234375, .01949310302734375, .01720428466796875, .0151824951171875, .013397216796875, .011821746826171875, .010433197021484375, .00920867919921875, .00812530517578125, .007171630859375} ;*/
-          
     // Initialize _index array
     for (int i = 0; i < _IndexSize; i++) {
         for (int j = 0; j < _IndexSize; j++) {
@@ -173,9 +181,9 @@ void Ip::proc() {
     
     else if (start == 0 && ready == 0)
     {
-        static int cntIp;
+        /*static int cntIp;
         cntIp++;
-        cout << cntIp << " of 49 processing started" << endl;
+        cout << cntIp << " of 49 processing started" << endl;*/
 
         
         // Examine all points from the gradient image that could lie within the _index square.
@@ -276,10 +284,13 @@ void Ip::proc() {
          }
          delete[] _Pixels; 
     
-         cout << cntIp << " of 49 entry from IP to memory completed" << endl;
+         cout << "Entry from IP to memory completed" << endl;
          ready = 1;   
-    
+
     }
+    
+    //wait(); broj, SC_NS
+    
  
 }
 
@@ -297,10 +308,10 @@ void Ip::AddSample(num_i r, num_i c, num_f rpos, num_f cpos, num_f rx, num_f cx,
 
     if (r < 1+step || r >= _height-1-step || c < 1+step || c >= _width-1-step ) return;
     
-    static int counter;
+    /*static int counter;
     counter ++;
     //cout << "Uslo u AddSample " << counter << " puta" << ", rpos: " << rpos << ", cpos: " << cpos << endl;
-    cout << "Uslo u AddSample: " << counter << " puta" << endl;
+    cout << "Uslo u AddSample: " << counter << " puta" << endl;*/
     
     
     
@@ -383,10 +394,27 @@ void Ip::write_mem(sc_uint<64> addr, num_f val)
     mem_socket->b_transport(pl, offset);
 }
 
+num_f Ip::read_rom(sc_dt::sc_uint<64> addr)
+{
+    pl_t pl;
+    unsigned char buf[6];
+    pl.set_address(addr);
+    pl.set_data_length(6);
+    pl.set_data_ptr(buf);
+    pl.set_command(tlm::TLM_READ_COMMAND);
+    pl.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
+    rom_socket->b_transport(pl,offset);
+    
+    num_f mega = toNum_f(buf);
+    
+    //cout << "buf iz ip-a: " << mega << endl;
+    
+    return toNum_f(buf);
+}
+
 num_f Ip::read_mem(sc_dt::sc_uint<64> addr)
 {
     pl_t pl;
-    sc_dt::sc_int <64> val;
     unsigned char buf[6];
     pl.set_address(addr);
     pl.set_data_length(6); 

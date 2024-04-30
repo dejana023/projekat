@@ -6,7 +6,7 @@
 #include <string>
 
 
-int toInt(unsigned char *buf)
+int toInt(unsigned char *buf) //Pretvara unsigned char u int
 {
     int val = 0;
     val += ((int)buf[0]) << 24;

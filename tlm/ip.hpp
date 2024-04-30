@@ -26,6 +26,7 @@ SC_MODULE(Ip)
 
         tlm_utils::simple_target_socket<Ip> interconnect_socket;
         tlm_utils::simple_initiator_socket<Ip> mem_socket;
+        tlm_utils::simple_initiator_socket<Ip> rom_socket;
         
 
 
@@ -39,6 +40,7 @@ SC_MODULE(Ip)
         
         void write_mem(sc_uint<64> addr, num_f val);
         num_f read_mem(sc_uint<64> addr);
+        num_f read_rom(sc_uint<64> addr);
         
         
         vector<num_f> mem;

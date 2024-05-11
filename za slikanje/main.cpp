@@ -353,8 +353,7 @@ void createVector(double scale, double row, double col) {
     radius = 1.4 * spacing * (_IndexSize + 1) / 2.0;
     iradius = (int) (radius/step + 0.5);
   
-    // Examine all points from the gradient image that could lie within the
-    // _index square.
+    // Examine all points from the gradient image that could lie within the _index square.
     for (i = -iradius; i <= iradius; i++)
         for (j = -iradius; j <= iradius; j++) {
       
@@ -377,12 +376,9 @@ void createVector(double scale, double row, double col) {
             int r = iy + i*step;
             int c = ix + j*step;
           
-            AddSample(r, c, rpos, cpos, rx, cx, int(scale));
-                
+            AddSample(r, c, rpos, cpos, rx, cx, int(scale));    
          }  
-    }
-    
-    
+    }  
 }
 
 

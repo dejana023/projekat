@@ -32,10 +32,6 @@ SC_MODULE(Ip)
 
     protected:
         void b_transport(pl_t&, sc_time&);
-        
-        void PlaceInIndex(num_f mag1, num_i ori1, num_f mag2, num_i ori2, num_f rx, num_f cx);
-        void AddSample(num_i r, num_i c, num_f rpos, num_f cpos, num_f rx, num_f cx, num_i step);
-        
         void proc();
         
         void write_mem(sc_uint<64> addr, num_f val);

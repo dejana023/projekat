@@ -10,15 +10,21 @@ Cpu::Cpu(sc_module_name name,const std::string& image_name, int argc, char **arg
 {
 
     SC_THREAD(software);
-    
     ImLoad ImageLoader;
     std::string image_path = "../data/" + image_name + ".jpg"; // Formiranje putanje do slike
     _im = ImageLoader.readImage(image_path.c_str()); // Učitavanje slike iz datoteke
+    Image image = _im;
     if (!_im) {
         std::cerr << "Nije moguće učitati sliku iz datoteke: " << image_path << std::endl;
         return;
     }
-    
+    int width = image.getWidth();
+    int height = image.getHeight();
+    if (width > 129 || height > 129) {
+        // Print a message indicating that the image is not of the correct size
+        std::cerr << "Image size is not 128x128 pixels. Please load an image with the correct size." << std::endl;
+        exit(0);
+    }
     // Učitavanje argumenata iz naredbenog reda
     int arg = 0;
     while (++arg < argc) {

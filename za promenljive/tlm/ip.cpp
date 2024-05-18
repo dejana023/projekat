@@ -289,19 +289,35 @@ void Ip::proc() {
         }
 
         // Naziv fajla će ostati isti za sve iteracije
-        std::string filename = "index1D.txt";
+        std::string filename1 = "index1Dbin.txt";
 
         // Pisanje index1D u .txt fajl u bitima, dodavanje na postojeći fajl
-        std::ofstream outfile(filename, std::ios::binary | std::ios::app);
-        if (!outfile.is_open()) {
+        std::ofstream outfile1(filename1, std::ios::binary | std::ios::app);
+        if (!outfile1.is_open()) {
             std::cerr << "Unable to open file";
         } else {
             // Dodavanje broja iteracije kao komentar za lakšu identifikaciju
-            outfile << "# Iteration " << iteration_counter << std::endl;
+            outfile1 << "# Iteration " << iteration_counter << std::endl;
             for (size_t i = 0; i < _IndexSize * _IndexSize * 4; i++) {
-                outfile << index1D[i].to_string(SC_BIN) << std::endl;
+                outfile1 << index1D[i].to_string(SC_BIN) << std::endl;
             }
-            outfile.close();
+            outfile1.close();
+        }
+        
+        // Naziv fajla će ostati isti za sve iteracije
+        std::string filename2 = "index1Ddec.txt";
+
+        // Pisanje index1D u .txt fajl u bitima, dodavanje na postojeći fajl
+        std::ofstream outfile2(filename2, std::ios::binary | std::ios::app);
+        if (!outfile2.is_open()) {
+            std::cerr << "Unable to open file";
+        } else {
+            // Dodavanje broja iteracije kao komentar za lakšu identifikaciju
+            outfile2 << "# Iteration " << iteration_counter << std::endl;
+            for (size_t i = 0; i < _IndexSize * _IndexSize * 4; i++) {
+                outfile2 << index1D[i].to_string(SC_DEC) << std::endl;
+            }
+            outfile2.close();
         }
 
         // Povećanje brojača iteracija

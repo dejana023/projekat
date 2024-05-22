@@ -141,6 +141,17 @@ void Ip::proc() {
         }
         pixels1D_file.close();
     }
+    
+    // Write pixels1D to a file in decimal format
+    std::ofstream pixels1D_filedec("pixels1Ddec.txt");
+    if (!pixels1D_filedec.is_open()) {
+        std::cerr << "Unable to open pixels1D file";
+    } else {
+        for (const auto& pixel : pixels1D) {
+            pixels1D_filedec << pixel.to_string(SC_DEC) << ", ";
+        }
+        pixels1D_filedec.close();
+    }
      
     _Pixels = new num_f*[_width];
     for (int i = 0; i < _width; i++) {

@@ -1,3 +1,4 @@
+
 #ifndef IP_H
 #define IP_H
 #define SC_INCLUDE_FX
@@ -47,7 +48,9 @@ SC_MODULE(Ip)
         sc_uint<1> start;
 
         std::vector<num_f> pixels1D;
-        std::vector<num_f> _lookup2;     
+        std::vector<num_f> _lookup2;
+        std::vector<num_f> _pixels1D;
+        std::vector<num_f> index1D;
         num_i iradius;
         num_f fracr;
         num_f fracc;
@@ -61,10 +64,9 @@ SC_MODULE(Ip)
         num_i ix;
         num_f rx;
         num_f cx;
-        num_i scale;
-        num_f** _Pixels;
-        std::vector<std::vector<std::vector<num_f>>> _index;    
+        num_i scale;  
 };
 
         
 #endif
+

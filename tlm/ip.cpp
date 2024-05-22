@@ -10,8 +10,10 @@ Ip::Ip(sc_module_name name) :
     
 {
     SC_THREAD(proc);
-    _index.resize(_IndexSize, std::vector<std::vector<num_f>>(_IndexSize, std::vector<num_f>(4, 0.0f)));
+    //_index.resize(_IndexSize, std::vector<std::vector<num_f>>(_IndexSize, std::vector<num_f>(4, 0.0f)));
+    index1D.resize(_IndexSize * _IndexSize * 4);
     _lookup2.resize(40);
+    _pixels1D.resize(_width*_height);
     interconnect_socket.register_b_transport(this, &Ip::b_transport);
     cout << "IP constructed" << endl;
 }
@@ -122,14 +124,7 @@ void Ip::proc() {
     
     for(int i=0; i<40; i++) {
         _lookup2[i] = static_cast<num_f>(_lookup2_pom[i]);
-    } 
-    
-    /*vector<num_f> _lookup2;
-    
-    for (int n=0; n<40; n++) {
-        offset += sc_core::sc_time(DELAY, sc_core::SC_NS);
-        _lookup2.push_back(read_rom(addr_rom + n));
-    }*/
+    }
           
     vector<num_f> pixels1D;
          
@@ -142,28 +137,14 @@ void Ip::proc() {
             pixels1D.push_back( read_mem(addr_Pixels1 + (w * _height + h)));
         }
     }
-         
-    _Pixels = new num_f*[_width];
-    for (int i = 0; i < _width; i++) {
-        _Pixels[i] = new num_f[_height];
+    
+    for (int i = 0; i < _width * _height; i++) {
+        _pixels1D[i] = static_cast<num_f>(pixels1D[i]);
     }
     
-    
-    int pixels1D_index2 = 0;
-    for (int w = 0; w < _width; w++) {
-        for (int h = 0; h < _height; h++) {
-            _Pixels[w][h] = static_cast<num_f>(pixels1D[pixels1D_index2++]);
-        }
-    }  
-          
-    // Initialize _index array
-    for (int i = 0; i < _IndexSize; i++) {
-        for (int j = 0; j < _IndexSize; j++) {
-            for (int k = 0; k < 4; k++)
-                _index[i][j][k] = 0.0;
-        }
+    for (int i = 0; i < _IndexSize * _IndexSize * 4; i++) {
+        index1D[i] = 0.0;
     }
-        
       
     if (start == 1 && ready == 1)
     {
@@ -215,11 +196,27 @@ void Ip::proc() {
                     
                     if (r >= 1 + addSampleStep && r < _height - 1 - addSampleStep && c >= 1 + addSampleStep && c < _width - 1 - addSampleStep) {
                         weight = _lookup2[num_i(rpos * rpos + cpos * cpos)];
- 
-                        dxx1 = _Pixels[r + addSampleStep + 1][c + addSampleStep + 1] + _Pixels[r - addSampleStep][c] - _Pixels[r - addSampleStep][c + addSampleStep + 1] - _Pixels[r + addSampleStep + 1][c];
-                        dxx2 = _Pixels[r + addSampleStep + 1][c + 1] + _Pixels[r - addSampleStep][c - addSampleStep] - _Pixels[r - addSampleStep][c + 1] - _Pixels[r + addSampleStep + 1][c - addSampleStep];
-                        dyy1 = _Pixels[r + 1][c + addSampleStep + 1] + _Pixels[r - addSampleStep][c - addSampleStep] - _Pixels[r - addSampleStep][c + addSampleStep + 1] - _Pixels[r + 1][c - addSampleStep];
-                        dyy2 = _Pixels[r + addSampleStep + 1][c + addSampleStep + 1] + _Pixels[r][c - addSampleStep] - _Pixels[r][c + addSampleStep + 1] - _Pixels[r + addSampleStep + 1][c - addSampleStep];
+     
+     
+                        dxx1 = _pixels1D[(r + addSampleStep + 1) * _width + (c + addSampleStep + 1)] 
+                             + _pixels1D[(r - addSampleStep) * _width + c]
+                             - _pixels1D[(r - addSampleStep) * _width + (c + addSampleStep + 1)]
+                             - _pixels1D[(r + addSampleStep + 1) * _width + c];
+         
+                        dxx2 = _pixels1D[(r + addSampleStep + 1) * _width + (c + 1)]
+                             + _pixels1D[(r - addSampleStep) * _width + (c - addSampleStep)]
+                             - _pixels1D[(r - addSampleStep) * _width + (c + 1)]
+                             - _pixels1D[(r + addSampleStep + 1) * _width + (c - addSampleStep)];
+        
+                        dyy1 = _pixels1D[(r + 1) * _width + (c + addSampleStep + 1)]
+                             + _pixels1D[(r - addSampleStep) * _width + (c - addSampleStep)]
+                             - _pixels1D[(r - addSampleStep) * _width + (c + addSampleStep + 1)]
+                             - _pixels1D[(r + 1) * _width + (c - addSampleStep)];
+         
+                        dyy2 = _pixels1D[(r + addSampleStep + 1) * _width + (c + addSampleStep + 1)]
+                             + _pixels1D[r * _width + (c - addSampleStep)]
+                             - _pixels1D[r * _width + (c + addSampleStep + 1)]
+                             - _pixels1D[(r + addSampleStep + 1) * _width + (c - addSampleStep)];
 
                         dxx = weight * (dxx1 - dxx2);
                         dyy = weight * (dyy1 - dyy2);
@@ -253,38 +250,30 @@ void Ip::proc() {
                         rweight2 = dy * (1.0 - rfrac);
                         cweight1 = rweight1 * (1.0 - cfrac);
                         cweight2 = rweight2 * (1.0 - cfrac);
+			    
+			
+			if (ri >= 0 && ri < _IndexSize && ci >= 0 && ci < _IndexSize) {
+			    index1D[ri * (_IndexSize * 4) + ci * 4 + ori1] += cweight1;
+			    index1D[ri * (_IndexSize * 4) + ci * 4 + ori2] += cweight2;
+			}
 
-                        if (ri >= 0 && ri < _IndexSize && ci >= 0 && ci < _IndexSize) {
-                            _index[ri][ci][ori1] += cweight1;
-                            _index[ri][ci][ori2] += cweight2;
-                        }
+			// Proverite da li je ci + 1 unutar granica pre pristupa
+			if (ci + 1 < _IndexSize) {
+			    index1D[ri * (_IndexSize * 4) + (ci + 1) * 4 + ori1] += rweight1 * cfrac;
+			    index1D[ri * (_IndexSize * 4) + (ci + 1) * 4 + ori2] += rweight2 * cfrac;
+			}
 
-                        if (ci + 1 < _IndexSize) {
-                            _index[ri][ci + 1][ori1] += rweight1 * cfrac;
-                            _index[ri][ci + 1][ori2] += rweight2 * cfrac;
-                        }
-
-                        if (ri + 1 < _IndexSize) {
-                            _index[ri + 1][ci][ori1] += dx * rfrac * (1.0 - cfrac);
-                            _index[ri + 1][ci][ori2] += dy * rfrac * (1.0 - cfrac);
-                        }
+			// Proverite da li je ri + 1 unutar granica pre pristupa
+			if (ri + 1 < _IndexSize) {
+			    index1D[(ri + 1) * (_IndexSize * 4) + ci * 4 + ori1] += dx * rfrac * (1.0 - cfrac);
+			    index1D[(ri + 1) * (_IndexSize * 4) + ci * 4 + ori2] += dy * rfrac * (1.0 - cfrac);
+			}
                     }  
                 }
             }
         }
 
         mem.clear();
-
-        num_f* index1D = new num_f[_IndexSize * _IndexSize * 4];
-        
-        int index1D_index = 0;
-        for (int i = 0; i < _IndexSize; i++) {
-            for (int j = 0; j < _IndexSize; j++) {
-                for (int k = 0; k < _IndexSize; k++) {
-                    index1D[index1D_index++] = static_cast<num_f>(_index[i][j][k]);
-                }
-            }
-        }
                   
         for (long unsigned int i = 0; i < _IndexSize*_IndexSize*4; ++i) 
         {
@@ -304,12 +293,7 @@ void Ip::proc() {
             pl.set_response_status(tlm::TLM_INCOMPLETE_RESPONSE);
             mem_socket->b_transport(pl, offset);
          }
-                  
-         for (int i = 0; i < _width; i++) {
-            delete[] _Pixels[i];
-         }
-         delete[] _Pixels; 
-    
+         
          cout << "Entry from IP to memory completed" << endl;
          ready = 1;   
 

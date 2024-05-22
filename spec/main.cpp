@@ -182,6 +182,24 @@ void saveIpoints(string sFileName, const vector< Ipoint >& ipts)
     cout << count << " interest points found" << endl;
 }
 
+num_f* pixels1D;
+
+void initializePixels1D(int width, int height, vector<vector<num_f>>& Pixels) {
+    pixels1D = new num_f[width * height];
+    int pixels1D_index = 0;
+    for (int w = 0; w < width; w++) {
+        for (int h = 0; h < height; h++) {
+            pixels1D[pixels1D_index++] = static_cast<num_f>(Pixels[w][h]);
+        }
+    }
+}
+
+num_f* _index1D;
+
+void initializeIndex1D(int IndexSize, int OriSize) {
+    _index1D = new num_f[IndexSize * IndexSize * OriSize]();
+}
+
 //Inicijalizacija globalnih promenljivih
 void initializeGlobals(Image *im, bool dbl = false, int insi = 4) {
     _iimage = im;
@@ -204,12 +222,9 @@ void initializeGlobals(Image *im, bool dbl = false, int insi = 4) {
             _Pixels[i][j] = static_cast<num_f>(tempPixels[i][j]);
         }
     }
-  
-    /*for (int i = 0; i < _height; ++i) {
-        for (int j = 0; j < _width; ++j) {
-            cout << "Pixels[" << i << "][" << j << "]" << " = " << _Pixels[i][j] << endl;
-        }
-    }*/
+    
+    initializePixels1D(_width, _height, _Pixels);
+    initializeIndex1D(_IndexSize, _OriSize);
 
     // allocate _index
     _index.resize(_IndexSize, std::vector<std::vector<num_f>>(_IndexSize, std::vector<num_f>(_OriSize, 0.0f)));
@@ -302,14 +317,9 @@ void assignOrientation() {
 
 void makeDescriptor() {
     _current->allocIvec(_VecLength);
-  
-    // Initialize _index array
-    for (int i = 0; i < _IndexSize; i++) {
-        for (int j = 0; j < _IndexSize; j++) {
-            for (int k = 0; k < _OriSize; k++) {
-                _index[i][j][k] = 0.0;
-            }
-        }
+    
+    for (int i = 0; i < _IndexSize * _IndexSize * _OriSize; i++) {
+        _index1D[i] = 0.0;
     }
 
     // calculate _sine and co_sine once
@@ -322,11 +332,8 @@ void makeDescriptor() {
                  (1+_doubleImage)*_current->x);
                              
     int v = 0;
-    for (int i = 0; i < _IndexSize; i++){
-        for (int j = 0; j < _IndexSize; j++){
-            for (int k = 0; k < _OriSize; k++)
-            _current->ivec[v++] = _index[i][j][k];
-        }
+    for (int i = 0; i < _IndexSize * _IndexSize * _OriSize; i++) {
+        _current -> ivec[v++] = _index1D[i];
     }
   
     normalise();
@@ -390,7 +397,7 @@ void AddSample(num_i r, num_i c, num_f rpos,
                      num_f cpos, num_f rx, num_f cx, num_i step) {
     num_f weight;
     num_f dx, dy;
-    num_f dxx, dyy;
+    num_f dxx, dyy, dxx1, dxx2, dyy1, dyy2;
     num_i ori1, ori2;
    
     // Clip at image boundaries.
@@ -399,8 +406,29 @@ void AddSample(num_i r, num_i c, num_f rpos,
  
     weight = _lookup2[num_i(rpos * rpos + cpos * cpos)];
 
-    dxx = weight*get_wavelet2(_Pixels, c, r, step);
-    dyy = weight*get_wavelet1(_Pixels, c, r, step);
+
+    dxx1 = pixels1D[(r + step + 1) * _width + (c + step + 1)] 
+         + pixels1D[(r - step) * _width + c]
+         - pixels1D[(r - step) * _width + (c + step + 1)]
+         - pixels1D[(r + step + 1) * _width + c];
+         
+    dxx2 = pixels1D[(r + step + 1) * _width + (c + 1)]
+         + pixels1D[(r - step) * _width + (c - step)]
+         - pixels1D[(r - step) * _width + (c + 1)]
+         - pixels1D[(r + step + 1) * _width + (c - step)];
+         
+    dyy1 = pixels1D[(r + 1) * _width + (c + step + 1)]
+         + pixels1D[(r - step) * _width + (c - step)]
+         - pixels1D[(r - step) * _width + (c + step + 1)]
+         - pixels1D[(r + 1) * _width + (c - step)];
+         
+    dyy2 = pixels1D[(r + step + 1) * _width + (c + step + 1)]
+         + pixels1D[r * _width + (c - step)]
+         - pixels1D[r * _width + (c + step + 1)]
+         - pixels1D[(r + step + 1) * _width + (c - step)];
+    
+    dxx = weight * (dxx1 - dxx2);
+    dyy = weight * (dyy1 - dyy2);
     dx = _cose*dxx + _sine*dyy;
     dy = _sine*dxx - _cose*dyy;
   
@@ -431,22 +459,21 @@ void PlaceInIndex(num_f dx, num_i ori1, num_f dy, num_i ori2, num_f rx, num_f cx
     num_f cweight1 = rweight1 * (1.0 - cfrac);
     num_f cweight2 = rweight2 * (1.0 - cfrac);
 
-    // Pre nego što pristupamo _index, proveravamo da li su ri i ci unutar granica
     if (ri >= 0 && ri < _IndexSize && ci >= 0 && ci < _IndexSize) {
-        _index[ri][ci][ori1] += cweight1;
-        _index[ri][ci][ori2] += cweight2;
+        _index1D[ri * (_IndexSize * _OriSize) + ci * _OriSize + ori1] += cweight1;
+        _index1D[ri * (_IndexSize * _OriSize) + ci * _OriSize + ori2] += cweight2;
     }
 
     // Proverite da li je ci + 1 unutar granica pre pristupa
     if (ci + 1 < _IndexSize) {
-        _index[ri][ci + 1][ori1] += rweight1 * cfrac;
-        _index[ri][ci + 1][ori2] += rweight2 * cfrac;
+        _index1D[ri * (_IndexSize * _OriSize) + (ci + 1) * _OriSize + ori1] += rweight1 * cfrac;
+        _index1D[ri * (_IndexSize * _OriSize) + (ci + 1) * _OriSize + ori2] += rweight2 * cfrac;
     }
 
     // Proverite da li je ri + 1 unutar granica pre pristupa
     if (ri + 1 < _IndexSize) {
-        _index[ri + 1][ci][ori1] += dx * rfrac * (1.0 - cfrac);
-        _index[ri + 1][ci][ori2] += dy * rfrac * (1.0 - cfrac);
+        _index1D[(ri + 1) * (_IndexSize * _OriSize) + ci * _OriSize + ori1] += dx * rfrac * (1.0 - cfrac);
+        _index1D[(ri + 1) * (_IndexSize * _OriSize) + ci * _OriSize + ori2] += dy * rfrac * (1.0 - cfrac);
     }
   
 }
